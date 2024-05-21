@@ -26,31 +26,30 @@ export const metadata: Metadata = {
 };
 
 let providersArray: ProvidersArray;
-if (process.env.NEXT_PUBLIC_ALGOD_NETWORK === '') {
-  const kmdConfig = getKmdConfigFromViteEnvironment();
-  providersArray = [
-    {
-      id: PROVIDER_ID.KMD,
-      clientOptions: {
-        wallet: kmdConfig.wallet,
-        password: kmdConfig.password,
-        host: kmdConfig.server,
-        token: String(kmdConfig.token),
-        port: String(kmdConfig.port),
-      },
-    },
-  ];
-} else {
-  providersArray = [
-    { id: PROVIDER_ID.DEFLY, clientStatic: DeflyWalletConnect },
-    { id: PROVIDER_ID.PERA, clientStatic: PeraWalletConnect },
-    { id: PROVIDER_ID.DAFFI, clientStatic: DaffiWalletConnect },
-    { id: PROVIDER_ID.EXODUS },
-    // If you are interested in WalletConnect v2 provider
-    // refer to https://github.com/TxnLab/use-wallet for detailed integration instructions
-  ];
-}
-
+// if (process.env.NEXT_PUBLIC_ALGOD_NETWORK === '') {
+//   const kmdConfig = getKmdConfigFromViteEnvironment();
+//   providersArray = [
+//     {
+//       id: PROVIDER_ID.KMD,
+//       clientOptions: {
+//         wallet: kmdConfig.wallet,
+//         password: kmdConfig.password,
+//         host: kmdConfig.server,
+//         token: String(kmdConfig.token),
+//         port: String(kmdConfig.port),
+//       },
+//     },
+//   ];
+// } else {
+providersArray = [
+  { id: PROVIDER_ID.DEFLY, clientStatic: DeflyWalletConnect },
+  { id: PROVIDER_ID.PERA, clientStatic: PeraWalletConnect },
+  { id: PROVIDER_ID.DAFFI, clientStatic: DaffiWalletConnect },
+  { id: PROVIDER_ID.EXODUS },
+  // If you are interested in WalletConnect v2 provider
+  // refer to https://github.com/TxnLab/use-wallet for detailed integration instructions
+];
+// }
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -61,22 +60,24 @@ export default function RootLayout({
   const walletProviders = useInitializeProviders({
     providers: providersArray,
     nodeConfig: {
-      network: algodConfig.network,
-      nodeServer: algodConfig.server,
-      nodePort: String(algodConfig.port),
-      nodeToken: String(algodConfig.token),
+      network: 'show',
+      nodeServer: 'http://localhost',
+      nodePort: '4001',
+      nodeToken:
+        'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
     },
     algosdkStatic: algosdk,
   });
+  console.log(walletProviders)
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SnackbarProvider maxSnack={3}>
-          <WalletProvider value={walletProviders}>
+         <SnackbarProvider maxSnack={3}> 
+          <WalletProvider value={walletProviders}> 
             <Navbar />
             {children}
-            </WalletProvider>
-        </SnackbarProvider>
+          </WalletProvider> 
+         </SnackbarProvider>
       </body>
     </html>
   );
